@@ -1,0 +1,147 @@
+/* Math rendering styles for KaTeX */
+
+/* Block math styling */
+.math-block {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.math-block .katex-display {
+  background-color: #f8f9fa;
+  padding: 1.2rem;
+  border-radius: 8px;
+  border-left: 4px solid #1976d2;
+  margin: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Inline math styling */
+.math-inline .katex {
+  font-size: 1.05em;
+  color: #1565c0;
+}
+
+/* Math text container */
+.math-text {
+  line-height: 1.8;
+  font-size: 1.1rem;
+}
+
+/* Question with math styling */
+.math-question {
+  line-height: 1.8;
+}
+
+.math-question .math-block {
+  margin: 2rem 0;
+}
+
+.math-question .math-block .katex-display {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e3f2fd 100%);
+  border-left: 4px solid #1976d2;
+  position: relative;
+}
+
+.math-question .math-block .katex-display::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #1976d2, transparent);
+}
+
+/* Answer explanation math */
+.math-explanation {
+  background-color: #f1f8e9;
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid #4caf50;
+  margin: 1rem 0;
+}
+
+.math-explanation .math-block .katex-display {
+  background-color: #e8f5e8;
+  border-left: 3px solid #4caf50;
+}
+
+/* Math input styling */
+.math-input {
+  font-family: 'Courier New', monospace;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+/* Math keyboard button styling */
+.math-symbol-btn {
+  min-width: 50px;
+  height: 40px;
+  font-family: 'Computer Modern', 'Times New Roman', serif;
+  font-size: 1.2rem;
+}
+
+/* Responsive math display */
+@media (max-width: 600px) {
+  .math-block .katex-display {
+    padding: 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .math-text {
+    font-size: 1rem;
+  }
+  
+  .math-inline .katex {
+    font-size: 1rem;
+  }
+}
+
+/* Math error styling */
+.math-error {
+  color: #d32f2f;
+  background-color: #ffebee;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  border: 1px solid #ffcdd2;
+}
+
+/* Improve KaTeX default styling */
+.katex {
+  font-size: inherit;
+}
+
+.katex-display {
+  margin: 1em 0;
+}
+
+/* Special styling for trigonometric functions */
+.trig-identity {
+  background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+  border-left: 4px solid #ff9800;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+}
+
+.trig-identity .katex-display {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 0;
+}
+
+/* Geometry and angle styling */
+.geometry-problem {
+  background: linear-gradient(135deg, #e8eaf6 0%, #f3e5f5 100%);
+  border-left: 4px solid #673ab7;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 1.5rem 0;
+}
+
+.geometry-problem .katex-display {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 0;
+}

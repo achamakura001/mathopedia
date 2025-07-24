@@ -1,0 +1,242 @@
+{
+  "grade1": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by ones and tens"
+      },
+      {
+        "name": "Shapes and Geometry",
+        "skill": "Identifying basic shapes like squares, circles, triangles, and rectangles"
+      },
+      {
+        "name": "Measurement",
+        "skill": "Comparing lengths using non-standard units"
+      }
+    ]
+  },
+  "grade2": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 5+3=8)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by tens"
+      },
+      {
+        "name": "Shapes and Geometry",
+        "skill": "Recognizing and naming basic attributes like sides, corners, and interior angles"
+      },
+      {
+        "name": "Measurement",
+        "skill": "Comparing lengths using standard units"
+      }
+    ]
+  },
+  "grade3": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 6+5=11)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by ones"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Introducing basic multiplication concepts like groups of objects"
+      },
+      {
+        "name": "Shapes and Geometry",
+        "skill": "Recognizing and naming basic geometry vocabulary like point, line, angle"
+      }
+    ]
+  },
+  "grade4": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 7+9=16)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by tens"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding basic division concepts like share or group"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Introducing basic fraction vocabulary like numerator, denominator, and simplify"
+      }
+    ]
+  },
+  "grade5": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 8+11=19)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by ones"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding multiplication concepts like arrays or repeated addition"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Simplifying fractions and comparing them"
+      }
+    ]
+  },
+  "grade6": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 9+14=23)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by tens"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding multiplication concepts like repeated addition or arrays"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Comparing fractions using visual models"
+      }
+    ]
+  },
+  "grade7": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 10+17=27)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by ones"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding multiplication concepts like repeated addition or arrays"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Simplifying complex fractions using equivalent ratios"
+      }
+    ]
+  },
+  "grade8": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 11+20=31)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by tens"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding division concepts like share or group"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Comparing decimals using visual models"
+      }
+    ]
+  },
+  "grade9": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 12+25=37)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by ones"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding multiplication concepts like repeated addition or arrays"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Simplifying complex fractions using equivalent ratios"
+      }
+    ]
+  },
+  "grade10": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 13+30=43)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by tens"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding division concepts like share or group"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Comparing decimals using visual models"
+      }
+    ]
+  },
+  "grade11": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 14+35=49)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by ones"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding multiplication concepts like repeated addition or arrays"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Simplifying complex fractions using equivalent ratios"
+      }
+    ]
+  },
+  "grade12": {
+    "topics": [
+      {
+        "name": "Number Sense",
+        "skill": "Basic addition and subtraction facts (e.g., 15+40=55)"
+      },
+      {
+        "name": "Addition and Subtraction",
+        "skill": "Counting up to 100 by tens"
+      },
+      {
+        "name": "Multiplication and Division",
+        "skill": "Understanding division concepts like share or group"
+      },
+      {
+        "name": "Fractions",
+        "skill": "Comparing decimals using visual models"
+      }
+    ]
+  }
+}

@@ -1,0 +1,45 @@
+Generate {count} math questions for grade {grade_level} students on the topic of {topic} with {complexity} complexity level.
+
+TOPIC SKILL DESCRIPTION: {skill_description}
+
+For each question, provide:
+1. Question text (clear and age-appropriate for grade {grade_level})
+2. Correct answer (concise and accurate)
+3. Detailed explanation (step-by-step solution that a grade {grade_level} student can understand)
+
+Return your response as a valid JSON array containing exactly {count} question objects. Each object should have these exact keys:
+- "question": the question text
+- "answer": the correct answer
+- "explanation": detailed step-by-step explanation
+
+Example format:
+[
+  {{
+    "question": "What is 2 + 3?",
+    "answer": "5",
+    "explanation": "To add 2 + 3, we start with 2 and count up 3 more: 3, 4, 5. So 2 + 3 = 5."
+  }},
+  {{
+    "question": "What is 4 + 1?",
+    "answer": "5", 
+    "explanation": "To add 4 + 1, we start with 4 and add 1 more to get 5."
+  }}
+]
+
+Guidelines:
+- Use grade {grade_level} appropriate language, vocabulary, and mathematical concepts
+- {complexity_capitalized} difficulty level appropriate for the grade
+- Focus specifically on {topic} as described: {skill_description}
+- Include variety in question types (word problems, calculations, conceptual questions)
+- Provide clear, educational explanations that help students learn
+- Use proper mathematical notation and formatting
+- Make questions engaging and relatable to students
+- Ensure answers are unambiguous and correct
+- For word problems, use realistic scenarios appropriate for the age group
+
+COMPLEXITY GUIDELINES:
+- Easy: Basic application of concepts, straightforward calculations, minimal steps
+- Medium: Multi-step problems, application in context, some reasoning required
+- Hard: Complex problems, multiple concepts combined, advanced reasoning, real-world applications
+
+Return ONLY the JSON array, no additional text before or after. Generate {count} questions now:
