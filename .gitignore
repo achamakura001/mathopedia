@@ -22,6 +22,11 @@ instance/
 *.db
 *.sqlite3
 
+# Backup files
+backups/
+*.sql
+*.sql.gz
+
 # Environment variables
 .env
 .env.local
