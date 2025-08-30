@@ -8,7 +8,15 @@ This directory contains the database schema and setup scripts for the Mathopedia
 - MySQL client or MySQL Workbench
 
 ## Setup Instructions
-
+    Install MySQL using Homebrew:
+            brew install mysql
+    Start the MySQL service:
+            brew services start mysql
+    Secure your MySQL installation (set root password, etc.):
+            mysql_secure_installation. (root/root123)
+    Log in to MySQL as root:
+            mysql -u root -p
+Create a new data
 ### 1. Create Database
 
 ```sql

@@ -108,7 +108,7 @@ if [ ! -f .env ]; then
 MYSQL_HOST=localhost
 MYSQL_PORT=3306
 MYSQL_USER=root
-MYSQL_PASSWORD=
+MYSQL_PASSWORD=root123
 MYSQL_DB=mathopedia
 
 # Security

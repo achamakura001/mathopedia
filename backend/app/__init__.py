@@ -1,3 +1,6 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
@@ -5,9 +8,12 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from config import config
 
+
 db = SQLAlchemy()
 jwt = JWTManager()
 migrate = Migrate()
+
+
 
 def create_app(config_name='default'):
     app = Flask(__name__)
