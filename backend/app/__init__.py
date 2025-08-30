@@ -37,12 +37,14 @@ def create_app(config_name='default'):
     from app.routes.answers import answers_bp
     from app.routes.profile import profile_bp
     from app.routes.admin import admin_bp
-    
+    from app.routes.analytics import analytics_bp
+
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(questions_bp, url_prefix='/api/questions')
     app.register_blueprint(answers_bp, url_prefix='/api/answers')
     app.register_blueprint(profile_bp, url_prefix='/api/profile')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
+    app.register_blueprint(analytics_bp, url_prefix='/api/analytics')
     
     # Register new Flask-RESTX API
     from app.api import api_blueprint, init_api

@@ -156,7 +156,7 @@ const AdminPanel = () => {
   const handleEditTopic = (topic) => {
     setEditingTopic(topic);
     setTopicForm({
-      name: topic.name,
+      name: topic.topic,
       skill: topic.skill,
       grade_level: topic.grade_level
     });
@@ -311,7 +311,7 @@ const AdminPanel = () => {
       
       {generating && (
         <Alert severity="info" sx={{ mb: 2 }} icon={<span>🤖</span>}>
-          <strong>Generating questions for {selectedTopic?.name}...</strong> 
+          <strong>Generating questions for {selectedTopic?.topic}...</strong> 
           <br />
           Please wait while AI creates {generationForm.count} {generationForm.complexity} questions. 
           This process may take up to 3 minutes.
@@ -374,7 +374,7 @@ const AdminPanel = () => {
                         </TableCell>
                         <TableCell>
                           <Typography variant="subtitle2">
-                            {topic.name}
+                            {topic.topic}
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -571,7 +571,8 @@ const AdminPanel = () => {
         disableEscapeKeyDown={generating}
       >
         <DialogTitle>
-          Generate Questions for {selectedTopic?.name}
+          Generate Questions for Topic: {selectedTopic?.topic},  Skill: {selectedTopic?.skill} 
+          , Grade: {selectedTopic?.grade_level}
           {generating && (
             <Typography variant="body2" color="primary" sx={{ fontStyle: 'italic', mt: 1 }}>
               🤖 AI is generating questions... This may take up to 3 minutes.
@@ -624,7 +625,7 @@ const AdminPanel = () => {
                   ⏳ <strong>Processing Request</strong>
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  • AI is analyzing the topic: "{selectedTopic?.name}"<br/>
+                  • AI is analyzing the topic: "{selectedTopic?.topic}"<br/>
                   • Generating {generationForm.count} {generationForm.complexity} questions<br/>
                   • Using {generationForm.provider} provider<br/>
                   • This process may take 1-3 minutes depending on complexity

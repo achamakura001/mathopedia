@@ -51,9 +51,9 @@ def get_all_topics():
     grade_level = request.args.get('grade_level', type=int)
     
     if grade_level:
-        topics = Topic.query.filter_by(grade_level=grade_level).order_by(Topic.name).all()
+        topics = Topic.query.filter_by(grade_level=grade_level).order_by(Topic.topic).all()
     else:
-        topics = Topic.query.order_by(Topic.grade_level, Topic.name).all()
+        topics = Topic.query.order_by(Topic.grade_level, Topic.topic).all()
     
     # Get question statistics for each topic
     topics_with_stats = []
@@ -73,7 +73,7 @@ def get_all_topics():
             Question.complexity,
             func.count(Question.id).label('count')
         ).filter(
-            Question.topic == topic.name,
+            Question.topic == topic.topic,
             Question.grade_level == str(topic.grade_level),  # Convert int to string for comparison
             Question.topic_id.is_(None)  # Only count legacy questions without topic_id
         ).group_by(Question.complexity).all()
@@ -162,14 +162,14 @@ def update_topic(topic_id):
     # Check if another topic with same name and grade level exists
     existing_topic = Topic.query.filter(
         Topic.id != topic_id,
-        Topic.name == data['name'].strip(),
+        Topic.topic == data['topic'].strip(),
         Topic.grade_level == data['grade_level']
     ).first()
     
     if existing_topic:
         return jsonify({'error': 'Topic with this name already exists for this grade level'}), 400
-    
-    topic.name = data['name'].strip()
+
+    topic.topic = data['topic'].strip()
     topic.skill = data['skill'].strip()
     topic.grade_level = data['grade_level']
     
