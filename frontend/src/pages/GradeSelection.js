@@ -219,21 +219,6 @@ const GradeSelection = () => {
             >
               Start with Grade 1
             </Button>
-            <Button
-              variant="outlined"
-              size="large"
-              onClick={() => navigate('/math-test')}
-              sx={{
-                borderColor: 'white',
-                color: 'white',
-                '&:hover': {
-                  borderColor: 'white',
-                  bgcolor: 'rgba(255,255,255,0.1)',
-                },
-              }}
-            >
-              View Math Examples
-            </Button>
           </Box>
         </Paper>
       </Box>

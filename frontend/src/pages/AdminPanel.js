@@ -55,9 +55,9 @@ const AdminPanel = () => {
   const [topicDialogOpen, setTopicDialogOpen] = useState(false);
   const [editingTopic, setEditingTopic] = useState(null);
   const [topicForm, setTopicForm] = useState({
-    name: '',
+    topic: '',
     skill: '',
-    grade_level: 1
+    grade_level: ''
   });
   
   // Question generation dialog states
@@ -85,8 +85,8 @@ const AdminPanel = () => {
   const loadTopics = useCallback(async () => {
     try {
       const url = selectedGrade 
-        ? `/api/admin/topics?grade_level=${selectedGrade}`
-        : '/api/admin/topics';
+        ? `/admin/topics?grade_level=${selectedGrade}`
+        : '/admin/topics';
         
       console.log('Loading topics from:', url);
       const response = await api.get(url);
@@ -110,7 +110,7 @@ const AdminPanel = () => {
   const loadUsers = useCallback(async () => {
     try {
       console.log('Loading users...');
-      const response = await api.get('/api/admin/users');
+      const response = await api.get('/admin/users');
       
       console.log('Users response status:', response.status);
       console.log('Users data received:', response.data);
@@ -149,16 +149,16 @@ const AdminPanel = () => {
   
   const handleCreateTopic = () => {
     setEditingTopic(null);
-    setTopicForm({ name: '', skill: '', grade_level: 1 });
+    setTopicForm({ topic: '', skill: '', grade_level: '' });
     setTopicDialogOpen(true);
   };
   
   const handleEditTopic = (topic) => {
     setEditingTopic(topic);
     setTopicForm({
-      name: topic.topic,
+      topic: topic.topic,
       skill: topic.skill,
-      grade_level: topic.grade_level
+      grade_level: String(topic.grade_level)
     });
     setTopicDialogOpen(true);
   };
@@ -168,9 +168,9 @@ const AdminPanel = () => {
       let response;
       
       if (editingTopic) {
-        response = await api.put(`/api/admin/topics/${editingTopic.id}`, topicForm);
+        response = await api.put(`/admin/topics/${editingTopic.id}`, topicForm);
       } else {
-        response = await api.post('/api/admin/topics', topicForm);
+        response = await api.post('/admin/topics', topicForm);
       }
       
       setSuccess(`Topic ${editingTopic ? 'updated' : 'created'} successfully`);
@@ -191,7 +191,7 @@ const AdminPanel = () => {
     }
     
     try {
-      await api.delete(`/api/admin/topics/${topicId}`);
+      await api.delete(`/admin/topics/${topicId}`);
       setSuccess('Topic deleted successfully');
       loadTopics();
     } catch (error) {
@@ -205,7 +205,7 @@ const AdminPanel = () => {
   
   const handleToggleAdminStatus = async (userId) => {
     try {
-      await api.put(`/api/admin/users/${userId}/admin`);
+      await api.put(`/admin/users/${userId}/admin`);
       setSuccess('User admin status updated successfully');
       loadUsers();
     } catch (error) {
@@ -237,7 +237,7 @@ const AdminPanel = () => {
     const timeoutId = setTimeout(() => controller.abort(), 180000); // 3 minutes timeout
     
     try {
-      const response = await api.post('/api/admin/generate-questions', {
+      const response = await api.post('/admin/generate-questions', {
         topic_id: selectedTopic.id,
         complexity: generationForm.complexity,
         count: generationForm.count,
@@ -518,8 +518,8 @@ const AdminPanel = () => {
             <TextField
               fullWidth
               label="Topic Name"
-              value={topicForm.name}
-              onChange={(e) => setTopicForm({ ...topicForm, name: e.target.value })}
+              value={topicForm.topic}
+              onChange={(e) => setTopicForm({ ...topicForm, topic: e.target.value })}
               sx={{ mb: 2 }}
             />
             
@@ -528,7 +528,7 @@ const AdminPanel = () => {
               <Select
                 value={topicForm.grade_level}
                 label="Grade Level"
-                onChange={(e) => setTopicForm({ ...topicForm, grade_level: e.target.value })}
+                onChange={(e) => setTopicForm({ ...topicForm, grade_level: String(e.target.value) })}
               >
                 {[...Array(12)].map((_, i) => (
                   <MenuItem key={i + 1} value={i + 1}>
@@ -555,7 +555,7 @@ const AdminPanel = () => {
           <Button 
             onClick={handleSaveTopic}
             variant="contained"
-            disabled={!topicForm.name.trim() || !topicForm.skill.trim()}
+            disabled={!topicForm.topic.trim() || !topicForm.skill.trim()}
           >
             {editingTopic ? 'Update' : 'Create'}
           </Button>

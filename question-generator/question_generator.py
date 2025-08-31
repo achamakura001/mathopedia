@@ -46,7 +46,7 @@ class LLMQuestionGenerator:
         try:
             print("DEBUG: Sending request to Ollama...")
             response = requests.post(
-                f"{self.ollama_base_url}/api/generate",
+                f"{self.ollama_base_url}/generate",
                 json=payload,
                 timeout=600
             )

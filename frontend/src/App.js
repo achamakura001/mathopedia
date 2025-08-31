@@ -16,7 +16,6 @@ import Quiz from './pages/Quiz';
 import Profile from './pages/Profile';
 import GradeSelection from './pages/GradeSelection';
 import AdminPanel from './pages/AdminPanel';
-import MathTest from './pages/MathTest';
 
 function App() {
   const { user, loading } = useAuth();
@@ -31,7 +30,10 @@ function App() {
       <Box sx={{ flex: 1, pt: 2 }}>
         <Routes>
           {/* Public routes */}
-          <Route path="/" element={<Home />} />
+           <Route 
+            path="/" 
+            element={user ? <Navigate to="/dashboard" /> : <Home />} 
+          />
           <Route 
             path="/login" 
             element={user ? <Navigate to="/dashboard" /> : <Login />} 
@@ -61,10 +63,6 @@ function App() {
           <Route 
             path="/admin" 
             element={user && user.is_admin ? <AdminPanel /> : <Navigate to="/dashboard" />} 
-          />
-          <Route 
-            path="/math-test" 
-            element={<MathTest />} 
           />
           
           {/* Catch all route */}

@@ -3,31 +3,31 @@ import api from './api';
 export const questionService = {
   // Get questions for a specific grade
   getQuestionsForGrade: async (gradeLevel) => {
-    const response = await api.get(`/api/questions/grade/${gradeLevel}`);
+    const response = await api.get(`/questions/grade/${gradeLevel}`);
     return response.data;
   },
 
   // Get questions for competitive exams
   getCompetitiveQuestions: async () => {
-    const response = await api.get(`/api/questions/grade/competitive`);
+    const response = await api.get(`/questions/grade/competitive`);
     return response.data;
   },
 
   // Get a specific question
   getQuestion: async (questionId) => {
-    const response = await api.get(`/api/questions/${questionId}`);
+    const response = await api.get(`/questions/${questionId}`);
     return response.data;
   },
 
   // Get grade statistics
   getGradeStats: async (gradeLevel) => {
-    const response = await api.get(`/api/questions/stats/grade/${gradeLevel}`);
+    const response = await api.get(`/questions/stats/grade/${gradeLevel}`);
     return response.data;
   },
 
   // Get competitive exam statistics
   getCompetitiveStats: async () => {
-    const response = await api.get(`/api/questions/stats/grade/competitive`);
+    const response = await api.get(`/questions/stats/grade/competitive`);
     return response.data;
   },
 };
@@ -35,7 +35,7 @@ export const questionService = {
 export const answerService = {
   // Submit answer
   submitAnswer: async (questionId, userAnswer) => {
-    const response = await api.post('/api/answers/submit', {
+    const response = await api.post('/answers/submit', {
       question_id: questionId,
       user_answer: userAnswer,
     });
@@ -49,13 +49,13 @@ export const answerService = {
       params.grade_level = gradeLevel;
     }
     
-    const response = await api.get('/api/answers/history', { params });
+    const response = await api.get('/answers/history', { params });
     return response.data;
   },
 
   // Get answer statistics
   getAnswerStats: async () => {
-    const response = await api.get('/api/answers/stats');
+    const response = await api.get('/answers/stats');
     return response.data;
   },
 };
@@ -63,7 +63,7 @@ export const answerService = {
 export const profileService = {
   // Get user profile
   getProfile: async () => {
-    const response = await api.get('/api/profile/');
+    const response = await api.get('/profile/');
     return response.data;
   },
 
@@ -73,13 +73,13 @@ export const profileService = {
     if (startDate) params.start_date = startDate;
     if (endDate) params.end_date = endDate;
     
-    const response = await api.get('/api/profile/daily-progress', { params });
+    const response = await api.get('/profile/daily-progress', { params });
     return response.data;
   },
 
   // Get achievements
   getAchievements: async () => {
-    const response = await api.get('/api/profile/achievements');
+    const response = await api.get('/profile/achievements');
     return response.data;
   },
 };

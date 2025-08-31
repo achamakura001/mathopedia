@@ -1,22 +1,30 @@
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import (
+    Column, Integer, String, Text, Boolean, DateTime, Date, 
+    ForeignKey, UniqueConstraint
+)
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
-from app import db
+from app.database import Base
 
-class User(db.Model):
+# Password hashing
+#pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+
+class User(Base):
     __tablename__ = 'users'
     
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(50), nullable=False)
-    last_name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    email = Column(String(120), unique=True, nullable=False, index=True)
+    password_hash = Column(String(255), nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships
-    answers = db.relationship('UserAnswer', backref='user', lazy=True, cascade='all, delete-orphan')
-    progress = db.relationship('DailyProgress', backref='user', lazy=True, cascade='all, delete-orphan')
+    answers = relationship('UserAnswer', back_populates='user', cascade='all, delete-orphan')
+    progress = relationship('DailyProgress', back_populates='user', cascade='all, delete-orphan')
     
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -34,35 +42,25 @@ class User(db.Model):
             'created_at': self.created_at.isoformat()
         }
 
-class Question(db.Model):
+
+class Question(Base):
     __tablename__ = 'questions'
     
-    id = db.Column(db.Integer, primary_key=True)
-    grade_level = db.Column(db.String(50), nullable=False)  # 1-12 or "Competitive Exams"
-    complexity = db.Column(db.String(20), nullable=False)  # easy, medium, hard
-    topic_id = db.Column(db.Integer, db.ForeignKey('topics.id'), nullable=True)  # Reference to Topic
-    topic = db.Column(db.String(100), nullable=False)  # Keep for backward compatibility
-    question_text = db.Column(db.Text, nullable=False)
-    correct_answer = db.Column(db.String(255), nullable=False)
-    explanation = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    grade_level = Column(String(50), nullable=False)  # 1-12 or "Competitive Exams"
+    complexity = Column(String(20), nullable=False)  # easy, medium, hard
+    topic_id = Column(Integer, ForeignKey('topics.id'), nullable=True)  # Reference to Topic
+    topic = Column(String(100), nullable=False)  # Keep for backward compatibility
+    question_text = Column(Text, nullable=False)
+    correct_answer = Column(String(255), nullable=False)
+    explanation = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships
-    user_answers = db.relationship('UserAnswer', backref='question', lazy=True)
-    
-    def get_or_create_topic_reference(self):
-        """Get or create a topic reference based on grade_level and topic name"""
-        if not self.topic_id:
-            topic = Topic.query.filter_by(topic=self.topic, grade_level=self.grade_level).first()
-            if topic:
-                self.topic_id = topic.id
-                db.session.commit()
-        return self.topic_id
+    user_answers = relationship('UserAnswer', back_populates='question')
+    topic_ref = relationship('Topic', back_populates='questions')
     
     def to_dict(self):
-        # Ensure topic_id is set if possible
-        self.get_or_create_topic_reference()
-        
         return {
             'id': self.id,
             'grade_level': self.grade_level,
@@ -76,15 +74,20 @@ class Question(db.Model):
             'created_at': self.created_at.isoformat()
         }
 
-class UserAnswer(db.Model):
+
+class UserAnswer(Base):
     __tablename__ = 'user_answers'
     
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    question_id = db.Column(db.Integer, db.ForeignKey('questions.id'), nullable=False)
-    user_answer = db.Column(db.String(255), nullable=False)
-    is_correct = db.Column(db.Boolean, nullable=False)
-    answered_at = db.Column(db.DateTime, default=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    question_id = Column(Integer, ForeignKey('questions.id'), nullable=False)
+    user_answer = Column(String(255), nullable=False)
+    is_correct = Column(Boolean, nullable=False)
+    answered_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = relationship('User', back_populates='answers')
+    question = relationship('Question', back_populates='user_answers')
     
     def to_dict(self):
         return {
@@ -97,45 +100,54 @@ class UserAnswer(db.Model):
             'question': self.question.to_dict() if self.question else None
         }
 
-class DailyProgress(db.Model):
+
+class DailyProgress(Base):
     __tablename__ = 'daily_progress'
     
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    questions_answered = db.Column(db.Integer, default=0)
-    correct_answers = db.Column(db.Integer, default=0)
-    total_time_spent = db.Column(db.Integer, default=0)  # in minutes
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    date = Column(Date, nullable=False)
+    questions_answered = Column(Integer, default=0)
+    correct_answers = Column(Integer, default=0)
+    total_time_spent = Column(Integer, default=0)  # in minutes
     
     # Composite unique constraint
-    __table_args__ = (db.UniqueConstraint('user_id', 'date', name='unique_user_date'),)
+    __table_args__ = (UniqueConstraint('user_id', 'date', name='unique_user_date'),)
+    
+    # Relationships
+    user = relationship('User', back_populates='progress')
     
     def to_dict(self):
+        accuracy = 0
+        if self.questions_answered > 0:
+            accuracy = round(self.correct_answers / self.questions_answered * 100, 2)
+        
         return {
             'id': self.id,
             'user_id': self.user_id,
             'date': self.date.isoformat(),
             'questions_answered': self.questions_answered,
             'correct_answers': self.correct_answers,
-            'accuracy': round(self.correct_answers / self.questions_answered * 100, 2) if self.questions_answered > 0 else 0,
+            'accuracy': accuracy,
             'total_time_spent': self.total_time_spent
         }
 
-class Topic(db.Model):
+
+class Topic(Base):
     __tablename__ = 'topics'
     
-    id = db.Column(db.Integer, primary_key=True)
-    topic = db.Column(db.String(100), nullable=False)
-    skill = db.Column(db.Text, nullable=False)
-    grade_level = db.Column(db.String(50), nullable=False)  # Changed from Integer to String to support "Competitive Exams"
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    id = Column(Integer, primary_key=True, index=True)
+    topic = Column(String(100), nullable=False)
+    skill = Column(Text, nullable=False)
+    grade_level = Column(String(50), nullable=False)  # Support "Competitive Exams"
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     # Unique constraint for topic name and grade level
-    __table_args__ = (db.UniqueConstraint('topic', 'grade_level', name='unique_topic_grade'),)
+    __table_args__ = (UniqueConstraint('topic', 'grade_level', name='unique_topic_grade'),)
     
     # Relationships
-    questions = db.relationship('Question', backref='topic_ref', lazy=True)
+    questions = relationship('Question', back_populates='topic_ref')
     
     def to_dict(self):
         return {
