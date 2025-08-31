@@ -50,9 +50,6 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password"
         )
-    print(user_data)
-    print(user.email,user.password_hash)
-    print(user.check_password(user_data.password))
     # Verify password with improved error handling
     try:
         if not user.check_password(user_data.password):

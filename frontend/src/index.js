@@ -37,6 +37,15 @@ const theme = createTheme({
         },
       },
     },
+    MuiCssBaseline: {
+      styleOverrides: {
+        ':root': {
+          '--gradient-primary': 'linear-gradient(135deg, #1976d2 0%, #283593 100%)',
+          '--gradient-secondary': 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+          '--gradient-light': 'linear-gradient(135deg, #9aa7f0 0%, #a478c7 100%)',
+        },
+      },
+    },
     MuiCard: {
       styleOverrides: {
         root: {

@@ -29,18 +29,22 @@ class Config:
     # Alternative LLM APIs
     OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
     ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
-    
+
+
 class DevelopmentConfig(Config):
     DEBUG = True
     # Allow all origins in development for easier testing
     CORS_ORIGINS = ['*']
 
+
 class ProductionConfig(Config):
     DEBUG = False
+
 
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
+
 
 config = {
     'development': DevelopmentConfig,

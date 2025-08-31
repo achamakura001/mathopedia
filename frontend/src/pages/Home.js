@@ -49,7 +49,7 @@ const Home = () => {
         sx={{
           py: 8,
           textAlign: 'center',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: 'var(--gradient-primary)',
           color: 'white',
           borderRadius: 2,
           mb: 6,
