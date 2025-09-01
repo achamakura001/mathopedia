@@ -85,7 +85,7 @@ const Quiz = () => {
     setSubmitting(true);
     try {
       const currentQuestion = questions[currentQuestionIndex];
-      const result = await answerService.submitAnswer(currentQuestion.id, userAnswer);
+      const result = await answerService.submitAnswer(currentQuestion.id, userAnswer, currentQuestion.test_identifier);
       
       setCurrentResult(result);
       setShowResult(true);

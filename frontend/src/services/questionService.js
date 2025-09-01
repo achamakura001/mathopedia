@@ -34,10 +34,11 @@ export const questionService = {
 
 export const answerService = {
   // Submit answer
-  submitAnswer: async (questionId, userAnswer) => {
+  submitAnswer: async (questionId, userAnswer,test_identifier) => {
     const response = await api.post('/answers/submit', {
       question_id: questionId,
       user_answer: userAnswer,
+      test_identifier: test_identifier
     });
     return response.data;
   },

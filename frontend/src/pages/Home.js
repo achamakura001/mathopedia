@@ -22,7 +22,7 @@ const Home = () => {
   const features = [
     {
       icon: <SchoolOutlined sx={{ fontSize: 60, color: 'primary.main' }} />,
-      title: 'Grade-Specific Learning',
+      title: 'Grade-Specific Practice',
       description: 'Tailored math questions for grades 1-12 with appropriate difficulty levels.',
     },
     {
@@ -59,7 +59,7 @@ const Home = () => {
           Welcome to Mathopedia
         </Typography>
         <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 4 }}>
-          Master Math from Grade 1 to 12 with Interactive Learning
+          Learn & Practice Math with Confidence: Grades 1-12
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Button

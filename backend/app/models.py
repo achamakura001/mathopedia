@@ -158,3 +158,34 @@ class Topic(Base):
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
+
+
+class PracticeTest(Base):
+    __tablename__ = 'practice_tests'
+    
+    id = Column(Integer, primary_key=True, index=True)
+    test_date = Column(DateTime, default=datetime.utcnow, nullable=False)
+    test_identifier = Column(String(50), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    question_id = Column(Integer, ForeignKey('questions.id'), nullable=False)
+    grade_level = Column(String(50), nullable=False)
+    # False = not attempted, True = completed
+    status = Column(Boolean, default=False, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    user = relationship('User')
+    question = relationship('Question')
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'test_date': self.test_date.isoformat(),
+            'test_identifier': self.test_identifier,
+            'user_id': self.user_id,
+            'question_id': self.question_id,
+            'grade_level': self.grade_level,
+            'status': self.status,
+            'created_at': self.created_at.isoformat(),
+            'question': self.question.to_dict() if self.question else None
+        }

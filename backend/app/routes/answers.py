@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from datetime import date
 from app.database import get_db
-from app.models import Question, UserAnswer, DailyProgress, User
+from app.models import Question, UserAnswer, DailyProgress, User, PracticeTest
 from app.schemas import AnswerSubmit
 from app.auth import get_current_user
 
@@ -70,11 +70,19 @@ def submit_answer(
                 correct_answers=1 if is_correct else 0
             )
             db.add(progress)
+
         else:
             progress.questions_answered += 1
             if is_correct:
                 progress.correct_answers += 1
         
+
+        db.query(PracticeTest).filter(
+            PracticeTest.user_id == current_user.id,
+            PracticeTest.question_id == question.id,
+            PracticeTest.test_identifier == answer_data.test_identifier
+        ).update({"status": True }, synchronize_session=False)
+
         db.commit()
         
         return {

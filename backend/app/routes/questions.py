@@ -2,8 +2,9 @@ from typing import List
 from fastapi import APIRouter, HTTPException, status, Depends, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, func
+from datetime import datetime
 from app.database import get_db
-from app.models import Question, UserAnswer, User
+from app.models import Question, UserAnswer, User, PracticeTest
 from app.auth import get_current_user
 import random
 
@@ -46,11 +47,11 @@ def get_questions_for_grade(
         .filter(
             and_(
                 Question.grade_level == grade_filter,
-                ~Question.id.in_(answered_question_ids)
+                ~Question.id.in_(answered_question_ids.select())
             )
         )\
         .all()
-    
+  
     if not available_questions:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -88,10 +89,37 @@ def get_questions_for_grade(
     # Shuffle the final selection
     random.shuffle(selected_questions)
     
+    # Save selected questions to practice_test table
+    try:
+        test_date = datetime.utcnow()
+        # Create test identifier from current time (HH:MM format)
+        test_identifier = str(int(test_date.timestamp()))
+        
+        for question in selected_questions:
+            practice_test = PracticeTest(
+                test_date=test_date,
+                test_identifier=test_identifier,
+                user_id=current_user.id,
+                question_id=question.id,
+                grade_level=grade_filter,
+                status=False  # Not attempted yet
+            )
+            db.add(practice_test)
+        
+        db.commit()
+        
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to create practice test: {str(e)}"
+        )
+    
     # Return questions without correct answers (for security)
     questions_data = []
     for question in selected_questions:
         question_dict = question.to_dict()
+        question_dict['test_identifier'] = test_identifier
         # Remove correct answer from response
         question_dict.pop('correct_answer', None)
         question_dict.pop('explanation', None)
@@ -99,7 +127,9 @@ def get_questions_for_grade(
     
     return {
         'questions': questions_data,
-        'total_count': len(questions_data)
+        'total_count': len(questions_data),
+        'test_identifier': test_identifier,
+        'test_date': test_date.isoformat()
     }
 
 
@@ -185,3 +215,112 @@ def get_grade_stats(
         'accuracy': accuracy,
         'remaining_questions': total_questions - answered_questions
     }
+
+
+@router.get("/practice-tests/{grade_level}")
+def get_practice_tests(
+    grade_level: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+    status_filter: bool = Query(None, description="Filter by status")
+):
+    """Get practice tests for a specific grade"""
+    # Handle both numeric grades and competitive exams
+    if grade_level == "competitive":
+        grade_filter = "Competitive Exams"
+    else:
+        try:
+            grade_int = int(grade_level)
+            if grade_int < 1 or grade_int > 12:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail='Invalid grade level. Must be between 1 and 12 or "competitive"'
+                )
+            grade_filter = str(grade_int)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='Invalid grade level. Must be between 1 and 12 or "competitive"'
+            )
+    
+    # Build query
+    query = db.query(PracticeTest).filter(
+        and_(
+            PracticeTest.user_id == current_user.id,
+            PracticeTest.grade_level == grade_filter
+        )
+    )
+    
+    # Apply status filter if provided
+    if status_filter is not None:
+        query = query.filter(PracticeTest.status == status_filter)
+    
+    practice_tests = query.order_by(PracticeTest.test_date.desc()).all()
+    
+    return {
+        'practice_tests': [test.to_dict() for test in practice_tests],
+        'total_count': len(practice_tests)
+    }
+
+
+@router.get("/practice-tests/identifier/{test_identifier}")
+def get_practice_test_by_identifier(
+    test_identifier: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get practice test by test identifier"""
+    practice_tests = db.query(PracticeTest).filter(
+        and_(
+            PracticeTest.user_id == current_user.id,
+            PracticeTest.test_identifier == test_identifier
+        )
+    ).order_by(PracticeTest.created_at.asc()).all()
+    
+    if not practice_tests:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Practice test not found"
+        )
+    
+    return {
+        'practice_tests': [test.to_dict() for test in practice_tests],
+        'total_count': len(practice_tests),
+        'test_identifier': test_identifier
+    }
+
+
+@router.put("/practice-tests/{test_id}/complete")
+def complete_practice_test(
+    test_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Mark a practice test as completed"""
+    practice_test = db.query(PracticeTest).filter(
+        and_(
+            PracticeTest.id == test_id,
+            PracticeTest.user_id == current_user.id
+        )
+    ).first()
+    
+    if not practice_test:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Practice test not found"
+        )
+    
+    try:
+        practice_test.status = True
+        db.commit()
+        
+        return {
+            "message": "Practice test marked as completed",
+            "practice_test": practice_test.to_dict()
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update practice test: {str(e)}"
+        )

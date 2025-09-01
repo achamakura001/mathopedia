@@ -95,7 +95,7 @@ const Profile = () => {
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       {/* Profile Header */}
-      <Paper sx={{ p: 4, mb: 4, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white' }}>
+      <Paper sx={{ p: 4, mb: 4, background: 'var(--gradient-primary)', color: 'white' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
           <Avatar
             sx={{
@@ -324,6 +324,7 @@ const Profile = () => {
                         <TableRow>
                           <TableCell>Date</TableCell>
                           <TableCell>Grade</TableCell>
+                          <TableCell>Complexity</TableCell>
                           <TableCell>Topic</TableCell>
                           <TableCell>Result</TableCell>
                           <TableCell>Your Answer</TableCell>
@@ -337,6 +338,9 @@ const Profile = () => {
                             </TableCell>
                             <TableCell>
                               Grade {answer.question?.grade_level}
+                            </TableCell>
+                            <TableCell>
+                              {answer.question?.complexity}
                             </TableCell>
                             <TableCell>
                               {answer.question?.topic}

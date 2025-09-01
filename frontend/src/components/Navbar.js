@@ -97,7 +97,7 @@ const Navbar = () => {
                 onClick={handleMenu}
                 color="inherit"
               >
-                <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
+                <Avatar sx={{ width: 32, height: 32, bgcolor: 'background.default', color: 'primary.main' }}>
                   {user.first_name?.[0]?.toUpperCase()}
                 </Avatar>
               </IconButton>

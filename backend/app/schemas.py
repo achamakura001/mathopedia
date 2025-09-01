@@ -89,6 +89,7 @@ class QuestionResponse(BaseModel):
 class AnswerSubmit(BaseModel):
     question_id: int
     user_answer: str
+    test_identifier: Optional[str] = None
 
 
 class UserAnswerResponse(BaseModel):
@@ -189,3 +190,30 @@ class UserStats(BaseModel):
     user: UserResponse
     progress_stats: ProgressStats
     topic_stats: List[TopicStats]
+
+
+# Practice Test Schemas
+class PracticeTestCreate(BaseModel):
+    user_id: int
+    question_id: int
+    grade_level: str
+    test_identifier: str
+    status: bool = False
+
+
+class PracticeTestResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    test_date: datetime
+    test_identifier: str
+    user_id: int
+    question_id: int
+    grade_level: str
+    status: bool
+    created_at: datetime
+    question: Optional[QuestionResponse] = None
+
+
+class PracticeTestUpdate(BaseModel):
+    status: Optional[bool] = None
