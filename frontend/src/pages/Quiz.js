@@ -109,16 +109,23 @@ const Quiz = () => {
     }
   };
 
-  const handleNextQuestion = () => {
+    const handleNextQuestion = () => {
     setShowResult(false);
     setCurrentResult(null);
-    setUserAnswer('');
     setMathKeyboardOpen(false); // Collapse math keyboard when moving to next question
     
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
+      
+      // Load the next question's answer if it exists
+      const nextAnswer = answers[currentQuestionIndex + 1];
+      if (nextAnswer) {
+        setUserAnswer(nextAnswer.userAnswer);
+      } else {
+        setUserAnswer('');
+      }
     } else {
-      // Quiz completed
+      // Quiz completed - show results
       const correctCount = answers.filter(a => a.isCorrect).length + (currentResult?.is_correct ? 1 : 0);
       const totalCount = questions.length;
       const accuracy = Math.round((correctCount / totalCount) * 100);
@@ -283,14 +290,27 @@ const Quiz = () => {
                 Previous
               </Button>
               
-              <Button
-                variant="contained"
-                onClick={handleAnswerSubmit}
-                disabled={submitting || isAnswered || !userAnswer.trim()}
-                sx={{ minWidth: 120 }}
-              >
-                {submitting ? 'Submitting...' : 'Submit Answer'}
-              </Button>
+              {isAnswered ? (
+                // Show Next button for already answered questions
+                <Button
+                  variant="contained"
+                  endIcon={<NavigateNextOutlined />}
+                  onClick={handleNextQuestion}
+                  disabled={currentQuestionIndex === questions.length - 1}
+                >
+                  {currentQuestionIndex === questions.length - 1 ? 'Review Results' : 'Next'}
+                </Button>
+              ) : (
+                // Show Submit button for unanswered questions
+                <Button
+                  variant="contained"
+                  onClick={handleAnswerSubmit}
+                  disabled={submitting || !userAnswer.trim()}
+                  sx={{ minWidth: 120 }}
+                >
+                  {submitting ? 'Submitting...' : 'Submit Answer'}
+                </Button>
+              )}
             </Box>
           </CardContent>
         </Card>

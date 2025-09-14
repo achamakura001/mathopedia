@@ -6,6 +6,8 @@ from dataclasses import dataclass
 import sys
 import re
 
+from sqlalchemy import create_engine
+
 # Add the backend directory to the path so we can import our models
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
@@ -22,8 +24,8 @@ class LLMQuestionGenerator:
     """Question generator that supports multiple LLM providers"""
     
     def __init__(self):
-        self.ollama_base_url = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434')
-        self.ollama_model = os.getenv('OLLAMA_MODEL', 'qwen2-math')
+        self.ollama_base_url = os.getenv('OLLAMA_BASE_URL', 'http://localhost:11434/api')
+        self.ollama_model = os.getenv('OLLAMA_MODEL', 'mathstral')
         self.openai_api_key = os.getenv('OPENAI_API_KEY')
         self.anthropic_api_key = os.getenv('ANTHROPIC_API_KEY')
     
@@ -366,50 +368,67 @@ def save_questions_to_database(questions: List[QuestionData]):
         print("Make sure you're running this from the correct directory and the backend is set up properly")
         return
     
-    app = create_app()
-    
-    with app.app_context():
-        saved_count = 0
-        skipped_count = 0
-        
-        for i, question_data in enumerate(questions):
-            print(f"DEBUG: Processing question {i+1}: {question_data.question_text[:50]}...")
-            
-            # Check if question already exists
-            existing = Question.query.filter_by(
-                grade_level=question_data.grade_level,
-                question_text=question_data.question_text
-            ).first()
-            
-            if not existing:
-                try:
-                    question = Question(
-                        grade_level=question_data.grade_level,
-                        complexity=question_data.complexity,
-                        topic=question_data.topic,
-                        question_text=question_data.question_text,
-                        correct_answer=question_data.correct_answer,
-                        explanation=question_data.explanation
-                    )
-                    db.session.add(question)
-                    saved_count += 1
-                    print(f"DEBUG: Added question {i+1} to session")
-                except Exception as e:
-                    print(f"ERROR: Failed to create question object for question {i+1}: {e}")
-            else:
-                skipped_count += 1
-                print(f"DEBUG: Question {i+1} already exists, skipping")
-        
-        try:
-            db.session.commit()
-            print(f"SUCCESS: Saved {saved_count} new questions to database!")
-            if skipped_count > 0:
-                print(f"INFO: Skipped {skipped_count} duplicate questions")
-        except Exception as e:
-            db.session.rollback()
-            print(f"ERROR: Failed to save questions to database: {e}")
-            print("This might be due to database connection issues or invalid data")
-            raise
+    # Standalone SQLAlchemy setup (not using Flask app context)
+    from app.models import Question, Base  # Base should be your declarative base
+
+    MYSQL_HOST = os.getenv('MYSQL_HOST', 'localhost')
+    MYSQL_PORT = os.getenv('MYSQL_PORT', '3306')
+    MYSQL_USER = os.getenv('MYSQL_USER', 'root')
+    MYSQL_PASSWORD = os.getenv('MYSQL_PASSWORD', 'root123')
+    MYSQL_DB = os.getenv('MYSQL_DB', 'mathopedia')
+
+# SQLAlchemy database URL
+    SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{MYSQL_USER}:{MYSQL_PASSWORD}@{MYSQL_HOST}:{MYSQL_PORT}/{MYSQL_DB}"
+
+    print(f"DEBUG: Connecting to database at {SQLALCHEMY_DATABASE_URL}")
+
+    engine = create_engine(SQLALCHEMY_DATABASE_URL)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    saved_count = 0
+    skipped_count = 0
+
+    for i, question_data in enumerate(questions):
+        print(f"DEBUG: Processing question {i+1}: {question_data.question_text[:50]}...")
+
+        # Check if question already exists
+        existing = session.query(Question).filter_by(
+            grade_level=question_data.grade_level,
+            question_text=question_data.question_text
+        ).first()
+
+        if not existing:
+            try:
+                question = Question(
+                    grade_level=question_data.grade_level,
+                    complexity=question_data.complexity,
+                    topic=question_data.topic,
+                    question_text=question_data.question_text,
+                    correct_answer=question_data.correct_answer,
+                    explanation=question_data.explanation
+                )
+                session.add(question)
+                saved_count += 1
+                print(f"DEBUG: Added question {i+1} to session")
+            except Exception as e:
+                print(f"ERROR: Failed to create question object for question {i+1}: {e}")
+        else:
+            skipped_count += 1
+            print(f"DEBUG: Question {i+1} already exists, skipping")
+
+    try:
+        session.commit()
+        print(f"SUCCESS: Saved {saved_count} new questions to database!")
+        if skipped_count > 0:
+            print(f"INFO: Skipped {skipped_count} duplicate questions")
+    except Exception as e:
+        session.rollback()
+        print(f"ERROR: Failed to save questions to database: {e}")
+        print("This might be due to database connection issues or invalid data")
+        raise
+    finally:
+        session.close()
 
 def debug_generation():
     """Debug function to test question generation without database operations"""
@@ -449,10 +468,12 @@ def main():
     import argparse
     
     parser = argparse.ArgumentParser(description='Generate math questions using LLM')
-    parser.add_argument('--grade', type=int, required=True, choices=range(1, 13), 
+    parser.add_argument('--grade', type=str, required=True, 
                         help='Grade level (1-12)')
     parser.add_argument('--topic', type=str, required=True, 
                         help='Math topic (e.g., Addition, Algebra, Calculus)')
+    parser.add_argument('--skill', type=str, required=True, 
+                        help='Making Inferences and Justifying Conclusions)')
     parser.add_argument('--complexity', type=str, required=True, 
                         choices=['easy', 'medium', 'hard'], 
                         help='Question complexity')
@@ -479,7 +500,8 @@ def main():
         topic=args.topic,
         complexity=args.complexity,
         count=args.count,
-        provider=args.provider
+        provider=args.provider,
+        skill_description=args.skill
     )
     
     if questions:
@@ -512,6 +534,8 @@ def main():
 
 if __name__ == "__main__":
     import sys
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
     if len(sys.argv) > 1 and sys.argv[1] == "debug":
         debug_generation()
     else:
